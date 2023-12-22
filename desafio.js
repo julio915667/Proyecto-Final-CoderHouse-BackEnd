@@ -1,67 +1,132 @@
+const fs = require('fs');
+const path = require('path');
+
 class ProductManager {
     constructor() {
-      this.products = []; 
-      this.lastId = 0;    
+        this.filePath = path.join(__dirname, 'data', 'products.json');
+        this.loadProducts();
     }
-  
-    create(title, description, price, photo, stock) {
-      const id = this.lastId++; 
-      const product = { id, title, description, price, photo, stock };
-      this.products.push(product);
-      return product;
+
+    create(data) {
+        const product = {
+            id: this.generateId(),
+            title: data.title,
+            photo: data.photo,
+            price: data.price,
+            stock: data.stock
+        };
+
+        this.products.push(product);
+        this.saveProducts();
+        return product;
     }
-    read(){
+
+    read() {
         return this.products;
     }
-    
-  readOne(id){
-    return this.products.find(product =>{
-       return product.id === id;
-    })
+
+    readOne(id) {
+        return this.products.find(product => product.id === id);
+    }
+
+    loadProducts() {
+        try {
+            const data = fs.readFileSync(this.filePath, 'utf8');
+            this.products = JSON.parse(data);
+        } catch (error) {
+            this.products = [];
+        }
+    }
+
+    saveProducts() {
+        try {
+            const data = JSON.stringify(this.products, null, 2);
+            fs.writeFileSync(this.filePath, data, 'utf8');
+        } catch (error) {
+            console.log('Error saving products to file:', error.message);
+        }
+    }
+
+    generateId() {
+        return this.products.length > 0 ? this.products[this.products.length - 1].id + 1 : 1;
+    }
 }
-  }
-
-  const productManager = new ProductManager();
-  const product1 = productManager.create("Bomba de agua", "1 pulgada", 34000, "link", 10);
-  const product2 = productManager.create("aro de luz led", "20 CM", 15000, "link", 15);
-
-
-  const readProducts = productManager.read();
-  const readOneProducts = productManager.readOne(Number(0))
-
-  console.log(readOneProducts); 
-  
 
 class UserManager {
     constructor() {
-      this.users = []; 
-      this.lastid = 0;    
+        this.filePath = path.join(__dirname, 'data', 'users.json');
+        this.loadUsers();
     }
-  
-    create(name, photo, email) {
-      const id = this.lastid++; 
-      const user = { id, name, photo, email };
-      this.users.push(user);
-      return user;
+
+    create(data) {
+        const user = {
+            id: this.generateId(),
+            name: data.name,
+            photo: data.photo,
+            email: data.email
+        };
+
+        this.users.push(user);
+        this.saveUsers();
+        return user;
     }
-    read(){
+
+    read() {
         return this.users;
     }
-    
-  readOne(id){
-    return this.users.find(user =>{
-       return user.id === id ;
-    })
+
+    readOne(id) {
+        return this.users.find(user => user.id === id);
+    }
+
+    loadUsers() {
+        try {
+            const data = fs.readFileSync(this.filePath, 'utf8');
+            this.users = JSON.parse(data);
+        } catch (error) {
+            this.users = [];
+        }
+    }
+
+    saveUsers() {
+        try {
+            const data = JSON.stringify(this.users, null, 2);
+            fs.writeFileSync(this.filePath, data, 'utf8');
+        } catch (error) {
+            console.log('Error saving users to file:', error.message);
+        }
+    }
+
+    generateId() {
+        return this.users.length > 0 ? this.users[this.users.length - 1].id + 1 : 1;
+    }
 }
+
+// Crear la carpeta 'data' si no existe
+const dataFolderPath = path.join(__dirname, 'data');
+if (!fs.existsSync(dataFolderPath)) {
+    fs.mkdirSync(dataFolderPath);
 }
 
-const users = new UserManager();
+const productManager = new ProductManager();
+const userManager = new UserManager();
 
-const user1 = users.create("PABLO GOMEZ", "foto no","pablo123@gmail.com" );
-const user2 = users.create("JULIAN MENDOZA", "foto no","JULIAN321@GMAIL.COM" );
-// console.log(user1);
-// console.log(user2);
+// Ejemplos de uso
+const product1 = productManager.create({
+    title: 'Bomba de agua',
+    photo: 'link',
+    price: 34000,
+    stock: 10
+});
 
-const userFind = users.readOne(0);
+const user1 = userManager.create({
+    name: 'PABLO GOMEZ',
+    photo: 'foto no',
+    email: 'pablo123@gmail.com'
+});
 
-console.log(userFind)
+// Imprimir resultados
+console.log('Productos:', productManager.read());
+console.log('Usuarios:', userManager.read());
+console.log('Producto específico:', productManager.readOne(product1.id));
+console.log('Usuario específico:', userManager.readOne(user1.id));
