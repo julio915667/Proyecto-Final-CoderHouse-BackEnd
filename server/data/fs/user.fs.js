@@ -1,32 +1,51 @@
-import fs from "fs"
-import path from "path"
-import crypto from "crypto"
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+
 class UserManager {
     constructor() {
         const __filename = new URL(import.meta.url).pathname;
-        this.filePath = path.join(path.dirname(__filename), 'data', 'fs', 'files', 'user.json');
+        this.filePath = path.join(path.dirname(__filename), 'users.json');
+
+        this.users = [];
         this.loadUsers();
     }
 
+    generateId() {
+        const id = crypto.randomBytes(6).toString('hex');
+        return id;
+    }
+
     create(data) {
-        const user = {
+        const newUser = {
             id: this.generateId(),
-            name: data.name,
-            photo: data.photo,
-            email: data.email
+            ...data,
         };
 
-        this.users.push(user);
+        this.users.push(newUser);
         this.saveUsers();
-        return user;
+        return newUser;
     }
 
     read() {
+        console.log("Reading all users:", this.users);
         return this.users;
     }
 
     readOne(id) {
+        console.log("Reading user with ID:", id);
         return this.users.find(user => user.id === id);
+    }
+
+    destroy(id) {
+        const index = this.users.findIndex(user => user.id === id);
+        if (index !== -1) {
+            this.users.splice(index, 1);
+            this.saveUsers();
+            return true; // Éxito en la eliminación
+        } else {
+            return false; // No se encontró el usuario
+        }
     }
 
     loadUsers() {
@@ -34,6 +53,7 @@ class UserManager {
             const data = fs.readFileSync(this.filePath, 'utf8');
             this.users = JSON.parse(data);
         } catch (error) {
+            console.error('Error loading users:', error.message);
             this.users = [];
         }
     }
@@ -46,21 +66,6 @@ class UserManager {
             console.log('Error saving users to file:', error.message);
         }
     }
-
-    generateId() {
-        const id = crypto.randomBytes(6).toString('hex'); // Mantener los primeros 12 caracteres
-        return id;
-    }
-    
-    destroy(id) {
-        const index = this.users.findIndex(user => user.id === id);
-        if (index !== -1) {
-            this.users.splice(index, 1);
-            this.saveUsers();
-            return true; // Indicar que la eliminación fue exitosa
-        } else {
-            return false; // Indicar que el usuario no fue encontrado
-        }
-    }
 }
-export default UserManager 
+
+export default UserManager;

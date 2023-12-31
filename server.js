@@ -10,6 +10,7 @@ server.listen(PORT,ready);
  
 //middlewares
 server.use(express.urlencoded({extended:true}));
+
 const productManager = new ProductManager();
 const userManager = new UserManager();
 
@@ -25,30 +26,23 @@ server.get("/", (req, res) => {
     }
 });
 
+// Endpoint para obtener todos los productos
 server.get("/api/products", (req, res) => {
-    try {
-        const products = productManager.read();
-        if (products.length > 0) {
-            res.json({
-                success: true,
-                response: products
-            });
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'not found!'
-            });
-        }
-    } catch (error) {
-        console.error('Error:', error.message);
-        res.status(500).json({
+    const products = productManager.read();
+    if (products.length > 0) {
+        res.json({
+            success: true,
+            response: products
+        });
+    } else {
+        res.status(404).json({
             success: false,
-            message: 'internal server error'
+            message: 'not found!'
         });
     }
 });
 
-
+// Endpoint para obtener un producto específico por su ID
 server.get("/api/products/:pid", (req, res) => {
     const productId = req.params.pid;
     const product = productManager.readOne(productId);
@@ -66,30 +60,23 @@ server.get("/api/products/:pid", (req, res) => {
     }
 });
 
-
-server.get("/api/user",(req, res) => {
-    try {
-        const users = userManager.read();
-        if (users.length > 0) {
-            res.json({
-                success: true,
-                response: products
-            });
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'not found!'
-            });
-        }
-    } catch (error) {
-        console.error('Error:', error.message);
-        res.status(500).json({
+// Endpoint para obtener todos los usuarios
+server.get("/api/users", (req, res) => {
+    const users = userManager.read();
+    if (users.length > 0) {
+        res.json({
+            success: true,
+            response: users
+        });
+    } else {
+        res.status(404).json({
             success: false,
-            message: 'internal server error'
+            message: 'not found!'
         });
     }
 });
 
+// Endpoint para obtener un usuario específico por su ID
 server.get("/api/users/:uid", (req, res) => {
     const userId = req.params.uid;
     const user = userManager.readOne(userId);

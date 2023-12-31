@@ -1,43 +1,54 @@
 // const fs = require('fs');
 // const path = require('path');
 // const crypto = require('crypto');
-import fs from "fs"
-import path from "path"
-import crypto from "crypto"
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+
 class ProductManager {
     constructor() {
         const __filename = new URL(import.meta.url).pathname;
-        this.filePath = path.join(path.dirname(__filename), 'data', 'fs', 'files', 'products.json');
+        this.filePath = path.join(path.dirname(__filename), 'files/products.json');
 
-        this.products = []; // Inicializar aquí
+        this.products = [];
         this.loadProducts();
     }
-    
+
+    generateId() {
+        const id = crypto.randomBytes(6).toString('hex');
+        return id;
+    }
 
     create(data) {
-        const product = {
+        const newProduct = {
             id: this.generateId(),
-            title: data.title,
-            photo: data.photo,
-            price: data.price,
-            stock: data.stock
+            ...data,
         };
-    
-        this.products.push(product);
+
+        this.products.push(newProduct);
         this.saveProducts();
-        this.loadProducts(); // Añadir esta línea
-        return product;
+        return newProduct;
     }
-    
 
     read() {
-        console.log("Reading all items:", this.products);
+        console.log("Reading all products:", this.products);
         return this.products;
     }
 
     readOne(id) {
-        console.log("Reading one item with ID:", id);
-    return this.products.find(product => product.id === id);
+        console.log("Reading product with ID:", id);
+        return this.products.find(product => product.id === id);
+    }
+
+    destroy(id) {
+        const index = this.products.findIndex(product => product.id === id);
+        if (index !== -1) {
+            this.products.splice(index, 1);
+            this.saveProducts();
+            return true; // Éxito en la eliminación
+        } else {
+            return false; // No se encontró el producto
+        }
     }
 
     loadProducts() {
@@ -49,7 +60,6 @@ class ProductManager {
             this.products = [];
         }
     }
-    
 
     saveProducts() {
         try {
@@ -59,23 +69,6 @@ class ProductManager {
             console.log('Error saving products to file:', error.message);
         }
     }
-
-    generateId() {
-        const id = crypto.randomBytes(6).toString('hex'); // Mantener los primeros 12 caracteres
-        return id;
-    }
-    
-    destroy(id) {
-        const index = this.products.findIndex(product => product.id === id);
-        if (index !== -1) {
-            this.products.splice(index, 1);
-            this.saveProducts();
-            return true; // Indicar que la eliminación fue exitosa
-        } else {
-            return false; // Indicar que el producto no fue encontrado
-        }
-    }
 }
 
 export default ProductManager;
-
