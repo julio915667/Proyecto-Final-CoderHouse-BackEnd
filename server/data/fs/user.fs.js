@@ -5,7 +5,7 @@ import crypto from "crypto";
 class UserManager {
     constructor() {
         const __filename = new URL(import.meta.url).pathname;
-        this.filePath = path.join(path.dirname(__filename), 'users.json');
+        this.filePath = path.join(path.dirname(__filename), 'files/users.json');
 
         this.users = [];
         this.loadUsers();
