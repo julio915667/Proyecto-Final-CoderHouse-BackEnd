@@ -3,7 +3,8 @@ import path from "path"
 import crypto from "crypto"
 class UserManager {
     constructor() {
-        this.filePath = path.join(__dirname, 'data', './files/user.json');
+        const __filename = new URL(import.meta.url).pathname;
+        this.filePath = path.join(path.dirname(__filename), 'data', 'fs', 'files', 'user.json');
         this.loadUsers();
     }
 
@@ -47,8 +48,19 @@ class UserManager {
     }
 
     generateId() {
-        const id = crypto.randomBytes(6).toString('hex'); // Generate a 12-character hex ID
+        const id = crypto.randomBytes(6).toString('hex'); // Mantener los primeros 12 caracteres
         return id;
+    }
+    
+    destroy(id) {
+        const index = this.users.findIndex(user => user.id === id);
+        if (index !== -1) {
+            this.users.splice(index, 1);
+            this.saveUsers();
+            return true; // Indicar que la eliminación fue exitosa
+        } else {
+            return false; // Indicar que el usuario no fue encontrado
+        }
     }
 }
 export default UserManager 

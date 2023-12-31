@@ -6,9 +6,13 @@ import path from "path"
 import crypto from "crypto"
 class ProductManager {
     constructor() {
-        this.filePath = path.join(__dirname, 'data', './files/products.json');
+        const __filename = new URL(import.meta.url).pathname;
+        this.filePath = path.join(path.dirname(__filename), 'data', 'fs', 'files', 'products.json');
+
+        this.products = []; // Inicializar aquí
         this.loadProducts();
     }
+    
 
     create(data) {
         const product = {
@@ -18,18 +22,22 @@ class ProductManager {
             price: data.price,
             stock: data.stock
         };
-
+    
         this.products.push(product);
         this.saveProducts();
+        this.loadProducts(); // Añadir esta línea
         return product;
     }
+    
 
     read() {
+        console.log("Reading all items:", this.products);
         return this.products;
     }
 
     readOne(id) {
-        return this.products.find(product => product.id === id);
+        console.log("Reading one item with ID:", id);
+    return this.products.find(product => product.id === id);
     }
 
     loadProducts() {
@@ -37,9 +45,11 @@ class ProductManager {
             const data = fs.readFileSync(this.filePath, 'utf8');
             this.products = JSON.parse(data);
         } catch (error) {
+            console.error('Error loading products:', error.message);
             this.products = [];
         }
     }
+    
 
     saveProducts() {
         try {
@@ -51,9 +61,21 @@ class ProductManager {
     }
 
     generateId() {
-        const id = crypto.randomBytes(6).toString('hex'); // Generate a 12-character hex ID
+        const id = crypto.randomBytes(6).toString('hex'); // Mantener los primeros 12 caracteres
         return id;
+    }
+    
+    destroy(id) {
+        const index = this.products.findIndex(product => product.id === id);
+        if (index !== -1) {
+            this.products.splice(index, 1);
+            this.saveProducts();
+            return true; // Indicar que la eliminación fue exitosa
+        } else {
+            return false; // Indicar que el producto no fue encontrado
+        }
     }
 }
 
 export default ProductManager;
+
