@@ -2,13 +2,14 @@ import express from 'express'
 // const path = require('path');
 const server = express ()
  import ProductManager from './server/data/fs/products.fs.js';
- import UserManager from './server/data/fs/user.fs.js';
-const PORT = 8080;
+ import UserManager from './server/data/fs/users.fs.js';
+const PORT = 9000;
 const ready = ()=> console.log('server ready on port ' +PORT);
  
 server.listen(PORT,ready);
  
 //middlewares
+server.use(express.json())
 server.use(express.urlencoded({extended:true}));
 
 const productManager = new ProductManager();
@@ -28,19 +29,25 @@ server.get("/", (req, res) => {
 
 // Endpoint para obtener todos los productos
 server.get("/api/products", (req, res) => {
-    const products = productManager.read();
-    if (products.length > 0) {
-        res.json({
-            success: true,
-            response: products
-        });
-    } else {
+    try {
+        const products = productManager.read();
+
+        if (products.length > 0) {
+            res.json({
+                success: true,
+                response: products
+            });
+        } else {
+            throw new Error('No se encontraron productos');
+        }
+    } catch (error) {
         res.status(404).json({
             success: false,
-            message: 'not found!'
+            message: error.message || 'Error interno del servidor'
         });
     }
 });
+
 
 // Endpoint para obtener un producto específico por su ID
 server.get("/api/products/:pid", (req, res) => {

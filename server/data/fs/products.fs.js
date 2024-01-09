@@ -1,18 +1,16 @@
-// const fs = require('fs');
-// const path = require('path');
-// const crypto = require('crypto');
-import fs from "fs";
-import path from "path";
-import crypto from "crypto";
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+import { getDirname } from './utils.js';
 
 class ProductManager {
-    constructor() {
-        const __filename = new URL(import.meta.url).pathname;
-        this.filePath = path.join(path.dirname(__filename), 'files/products.json');
+  constructor() {
+    const currentDir = getDirname(import.meta);
+    this.filePath = path.join(currentDir, 'files/products.json');
 
-        this.products = [];
-        this.loadProducts();
-    }
+    this.products = [];
+    this.loadProducts();
+  }
 
     generateId() {
         const id = crypto.randomBytes(6).toString('hex');
