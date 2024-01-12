@@ -1,8 +1,12 @@
 import express from 'express'
 // const path = require('path');
 const server = express ()
- import ProductManager from './server/data/fs/products.fs.js';
- import UserManager from './server/data/fs/users.fs.js';
+import ProductManager from './src/server/data/fs/products.fs.js';
+ import UserManager from './src/server/data/fs/users.fs.js';
+import errorHandler from './src/server/middlewares/errorHandler.mid.js';
+import pathHandler from './src/server/middlewares/pathHandler.mid.js';
+import router from './src/server/routers/index.router.js';
+
 const PORT = 9000;
 const ready = ()=> console.log('server ready on port ' +PORT);
  
@@ -11,6 +15,11 @@ server.listen(PORT,ready);
 //middlewares
 server.use(express.json())
 server.use(express.urlencoded({extended:true}));
+
+//esto sacar el comentario
+//server.use("./"",router)
+//server.use(pathHandler)
+//server.use(errorHandler)
 
 const productManager = new ProductManager();
 const userManager = new UserManager();
