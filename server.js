@@ -18,11 +18,11 @@ server.use(express.json())
 server.use(express.urlencoded({extended:true}));
 
 //esto sacar el comentario
-//server.use("./"",router)
+//server.use("./",router)
 server.use(express.static(getDirname+"/public"))
 server.use(morgan("dev"))
-//server.use(pathHandler)
-//server.use(errorHandler)
+server.use(pathHandler)
+server.use(errorHandler)
 
 const productManager = new ProductManager();
 const userManager = new UserManager();
@@ -38,7 +38,6 @@ server.get("/", (req, res) => {
         });
     }
 });
-
 // Endpoint para obtener todos los productos
 server.get("/api/products", (req, res) => {
     try {
@@ -94,6 +93,7 @@ server.get("/api/users", (req, res) => {
         });
     }
 });
+
 
 // Endpoint para obtener un usuario específico por su ID
 server.get("/api/users/:uid", (req, res) => {
