@@ -6,7 +6,9 @@ import ProductManager from './src/server/data/fs/products.fs.js';
 import errorHandler from './src/server/middlewares/errorHandler.mid.js';
 import pathHandler from './src/server/middlewares/pathHandler.mid.js';
 import router from './src/server/routers/index.router.js';
-import { getDirname } from './src/server/data/fs/utils.js';
+import __dirname from './src/server/data/fs/utils.js';
+// ...
+
 import morgan from 'morgan';
 const PORT = 9000;
 const ready = ()=> console.log('server ready on port ' +PORT);
@@ -19,7 +21,7 @@ server.use(express.urlencoded({extended:true}));
 
 //esto sacar el comentario
 //server.use("./",router)
-server.use(express.static(getDirname+"/public"))
+server.use(express.static(__dirname + "/public"));
 server.use(morgan("dev"))
 server.use(pathHandler)
 server.use(errorHandler)

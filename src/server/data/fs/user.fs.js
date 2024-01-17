@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-
+import __dirname from './utils.js';
+const currentDir = __dirname;
 class UserManager {
     constructor() {
         const __filename = new URL(import.meta.url).pathname;

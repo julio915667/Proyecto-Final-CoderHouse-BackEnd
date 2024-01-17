@@ -1,16 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { getDirname } from './utils.js';
+import __dirname from './utils.js';
+const currentDir = __dirname;
 
 class ProductManager {
-  constructor() {
-    const currentDir = getDirname(import.meta);
-    this.filePath = path.join(currentDir, 'files/products.json');
-
-    this.products = [];
-    this.loadProducts();
-  }
+    constructor() {
+        this.filePath = path.join(currentDir, 'files/products.json');
+        this.products = [];
+        this.loadProducts();
+    }
 
     generateId() {
         const id = crypto.randomBytes(6).toString('hex');

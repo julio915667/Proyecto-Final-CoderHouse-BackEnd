@@ -1,17 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { getDirname } from './utils.js';
-
+import __dirname from './utils.js';
+const currentDir = __dirname;
 class UserManager {
-  constructor() {
-    const currentDir = getDirname(import.meta);
-    this.filePath = path.join(currentDir, 'files/users.json');
-
-    this.users = [];
-    this.loadUsers();
-  }
-
+    constructor() {
+        this.filePath = path.join(currentDir, 'files/users.json');
+        this.users = [];
+        this.loadUsers();
+    }
     generateId() {
         const id = crypto.randomBytes(6).toString('hex');
         return id;
