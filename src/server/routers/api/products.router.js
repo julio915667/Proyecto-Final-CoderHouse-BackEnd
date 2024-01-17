@@ -1,7 +1,11 @@
-import {Router} from 'express'
-const productsRouter = Router()
-productsRouter.post("/", (req, res)=>{})
-productsRouter.get("/api/products", (req, res) => {
+import { Router } from 'express';
+import ProductManager from '../../data/fs/products.fs.js';
+
+const productsRouter = Router();
+const productManager = new ProductManager();
+
+// Obtener todos los productos
+productsRouter.get("/", (req, res) => {
     try {
         const products = productManager.read();
 
@@ -21,7 +25,8 @@ productsRouter.get("/api/products", (req, res) => {
     }
 });
 
-productsRouter.get("/api/products/:pid", (req, res) => {
+// Obtener un producto específico por su ID
+productsRouter.get("/:pid", (req, res) => {
     const productId = req.params.pid;
     const product = productManager.readOne(productId);
 
@@ -37,6 +42,20 @@ productsRouter.get("/api/products/:pid", (req, res) => {
         });
     }
 });
-productsRouter.put("/:pid", (req, res)=>{})
-productsRouter.delete("/:pid", (req, res)=>{})
-export default productsRouter
+
+// Agregar un nuevo producto
+productsRouter.post("/", (req, res) => {
+   
+});
+
+// Actualizar un producto existente por su ID
+productsRouter.put("/:pid", (req, res) => {
+    
+});
+
+// Eliminar un producto por su ID
+productsRouter.delete("/:pid", (req, res) => {
+    
+});
+
+export default productsRouter;
